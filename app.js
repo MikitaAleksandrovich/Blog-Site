@@ -22,28 +22,21 @@ app.get('/', (req, res) => {
 
   res.render('home', {
     homeStartingContent: homeStartingContent, 
-    posts: posts
+    posts: posts,
   });
-
 });
 
 
 app.get('/about', (req, res) => {
-
   res.render('about', {aboutContent: aboutContent});
-  
 });
 
 app.get('/contact', (req, res) => {
-
   res.render('contact', {contactContent: contactContent});
-  
 });
 
 app.get('/compose', (req, res) => {
-
   res.render('compose');
-  
 });
 
 app.post('/compose', (req, res) => {
@@ -52,7 +45,7 @@ app.post('/compose', (req, res) => {
     title: req.body.postTitle,
     content: req.body.postBody
   }; 
-
+  
   posts.push(post);
 
   res.redirect('/');
