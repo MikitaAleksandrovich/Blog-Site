@@ -29,14 +29,14 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-let posts = [];
 
 app.get('/', (req, res) => {
-
-  res.render('home', {
-    homeStartingContent: homeStartingContent, 
-    posts: posts,
-  });
+  Post.find({}, (err, posts) => {
+    res.render('home', {
+      homeStartingContent: homeStartingContent,
+      posts: posts
+    })
+  })
 });
 
 
@@ -55,31 +55,42 @@ app.get('/compose', (req, res) => {
 app.post('/compose', (req, res) => {
 
   const post = new Post ({
-    title: req.body.title,
+    title: req.body.postTitle,
     content: req.body.postBody
   });
 
-  post.save();
+  post.save((err) => {
+    if(!err) {
+      res.redirect('/');
+    }
+  });
 
 });
 
-app.get('/posts/:postName', (req, res) => { 
+app.get('/posts/:postId', (req, res) => { 
 
-  const requestedTitle = _.lowerCase(req.params.postName);
+  const requestedPostId = req.params.postId;
 
-  posts.forEach(post => {
-    const storedTitle = _.lowerCase(post.title);
-
-    _.lowerCase([string='storedTitle']);
-
-    if (storedTitle === requestedTitle) {
-      
-      res.render('post', {
-        title: post.title,
-        content: post.content
-      });
-    };
+  Post.findOne({_id: requestedPostId}, (err, post) => {
+    res.render('post', {
+      title: post.title,
+      content: post.content
+    })
   });
+
+  // posts.forEach(post => {
+  //   const storedTitle = _.lowerCase(post.title);
+
+  //   _.lowerCase([string='storedTitle']);
+
+  //   if (storedTitle === requestedTitle) {
+      
+  //     res.render('post', {
+  //       title: post.title,
+  //       content: post.content
+  //     });
+  //   };
+  // });
 });
 
 app.listen(process.env.PORT || 3000, () => {
